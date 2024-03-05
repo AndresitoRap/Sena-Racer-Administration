@@ -37,12 +37,9 @@ jobs:
       run: 
         flutter build web --release
     
-    - name: Change to project directory
-      run: cd Sena-Racer-admin/Sena-Racer-admin/
     
     - name: Firebase deploy
       run:
         sudo npm install -g firebase-tools
         firebase deploy --token ${{ secrets.FIREBASE_TOKEN }}
-
         
