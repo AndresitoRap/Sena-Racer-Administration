@@ -29,7 +29,7 @@ jobs:
         flutter config --enable-web
         flutter packages get
         flutter pub get
-        flutter build web --release
+        flutter build web 
     
     - name: Firebase deploy
       run:
