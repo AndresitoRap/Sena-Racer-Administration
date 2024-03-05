@@ -27,7 +27,6 @@ jobs:
     - name: Build Flutter Web
       run: 
         flutter config --enable-web
-        flutter packages get
         flutter pub get
         flutter build web 
     
