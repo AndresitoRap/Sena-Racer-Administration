@@ -1,15 +1,16 @@
-name: Deploy Flutter Web
+name: Flutter Sena Racer Web
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps: 
-    - name: Chekout
+    - name: Checkout
       uses: actions/checkout@v2
 
     - name: Setup Flutter
