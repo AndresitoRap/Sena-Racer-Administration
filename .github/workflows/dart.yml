@@ -24,10 +24,17 @@ jobs:
       with:
         channel: 'beta'
     
-    - name: Build Flutter Web
+    - name: Enable Flutter Web
       run: 
         flutter config --enable-web
+
+    - name: Install dependencies
+      run: 
+        flutter packages get
         flutter pub get
+
+    - name: Build Web
+      run: 
         flutter build web 
     
     - name: Firebase deploy
