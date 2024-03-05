@@ -1,0 +1,50 @@
+name: sena_racer_admin
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.6 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  http: ^1.2.0
+  provider: ^6.1.1
+  csv: ^5.1.1
+  file_picker: ^6.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "img/SENA_Racer.jpg"
+  web:
+    generate: true
+    image_path: "img/SENA_Racer.jpg"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "img/SENA_Racer.jpg"
+    icon_size: 48 
+  macos:
+    generate: true
+    image_path: "img/SENA_Racer.jpg"
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - img/
+
+  fonts:
+    - family: Itim
+      fonts:
+        - asset: fonts/Itim-Regular.ttf
