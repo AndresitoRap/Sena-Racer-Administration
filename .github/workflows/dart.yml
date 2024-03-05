@@ -37,6 +37,10 @@ jobs:
       run: 
         flutter build web 
     
+     - name: Change to project directory
+      run: cd Sena-Racer-admin/Sena-Racer-admin/1/01S6ImTOpXV6oCgYIARAAGAESNwF-L9Ir0W2TD0oGCnSb_6sJQEGQfvBky4Ezcep6OBh37tJSZZHJf2Bahcpeua4tT4a7DH4FoiM
+
+    
     - name: Firebase deploy
       run:
         sudo npm install -g firebase-tools
