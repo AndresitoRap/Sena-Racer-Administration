@@ -50,7 +50,7 @@ class _AddRunnersState extends State<AddRunners> {
   }
 
   Future<void> _uploadCSVtoStrapi() async {
-    const String url = "http://localhost:1337/api/runners/";
+    const String url = "https://backend-strapi-senaracer.onrender.com/api/runners/";
 
     showDialog(
       context: context,
@@ -135,7 +135,7 @@ class _AddRunnersState extends State<AddRunners> {
   }
 
   Future<void> addRunner() async {
-    const String url = "http://localhost:1337/api/runners/";
+    const String url = "https://backend-strapi-senaracer.onrender.com/api/runners/";
 
     final Map<String, String> dataBody = {
       "name": nameRunner.text,

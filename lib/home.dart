@@ -33,7 +33,7 @@ class _HomeState extends State<Home> {
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> _addAdmin(BuildContext context) async {
-    final url = Uri.parse('http://localhost:1337/api/admins');
+    final url = Uri.parse('https://backend-strapi-senaracer.onrender.com/api/admins');
 
     final response = await http.post(
       url,

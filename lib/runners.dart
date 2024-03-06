@@ -21,7 +21,7 @@ class _RunnersPageState extends State<RunnersPage> {
 
   Future<List<Runner>> getAllRunners() async {
     var response =
-        await http.get(Uri.parse("http://localhost:1337/api/runners/"));
+        await http.get(Uri.parse("https://backend-strapi-senaracer.onrender.com/api/runners/"));
 
     if (response.statusCode == 200) {
       runner.clear();
@@ -47,7 +47,7 @@ class _RunnersPageState extends State<RunnersPage> {
   void deleteRunner(int index) async {
     await http.delete(
       Uri.parse(
-          "http://localhost:1337/api/runners/${runner[index].id.toString()}"),
+          "https://backend-strapi-senaracer.onrender.com/api/runners/${runner[index].id.toString()}"),
     );
     setState(() {
       runner.removeAt(index);
@@ -62,7 +62,7 @@ class _RunnersPageState extends State<RunnersPage> {
     required String password,
   }) async {
     @override
-    const String url = "http://localhost:1337/api/runners/";
+    const String url = "https://backend-strapi-senaracer.onrender.com/api/runners/";
 
     final Map<String, String> dataHeader = {
       "Acces-Control-Allow-Methods": "[GET, POST, PUT, DETELE, HEAD, OPTIONS]",

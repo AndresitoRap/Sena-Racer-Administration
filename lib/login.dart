@@ -41,7 +41,7 @@ class _LoginState extends State<Login> {
     if (identification.isNotEmpty && password.isNotEmpty) {
       try {
         var response = await http.get(
-          Uri.parse('http://localhost:1337/api/admins'),
+          Uri.parse('https://backend-strapi-senaracer.onrender.com/api/admins'),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'

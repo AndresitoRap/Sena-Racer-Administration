@@ -27,7 +27,7 @@ class _PerfilState extends State<Perfil> {
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> _addAdmin(BuildContext context) async {
-    final url = Uri.parse('http://localhost:1337/api/admins');
+    final url = Uri.parse('https://backend-strapi-senaracer.onrender.com/api/admins');
 
     final response = await http.post(
       url,
@@ -61,7 +61,7 @@ class _PerfilState extends State<Perfil> {
   Future<void> changePassword(
       {required UserData userData, required String password}) async {
     @override
-    const String url = "http://localhost:1337/api/admins/";
+    const String url = "https://backend-strapi-senaracer.onrender.com/api/admins/";
 
     final Map<String, String> dataHeader = {
       "Acces-Control-Allow-Methods": "[GET, POST, PUT, DETELE, HEAD, OPTIONS]",
@@ -165,7 +165,7 @@ class _PerfilState extends State<Perfil> {
     required int cellphone,
   }) async {
     @override
-    const String url = "http://localhost:1337/api/admins/";
+    const String url = "https://backend-strapi-senaracer.onrender.com/api/admins/";
 
     final Map<String, String> dataHeader = {
       "Acces-Control-Allow-Methods": "[GET, POST, PUT, DETELE, HEAD, OPTIONS]",
