@@ -69,6 +69,7 @@ class _LoginState extends State<Login> {
             if (password == adminPassword) {
               // ignore: use_build_context_synchronously
               Navigator.pushReplacement(
+                // ignore: use_build_context_synchronously
                 context,
                 MaterialPageRoute(
                   builder: (context) => const Home(),

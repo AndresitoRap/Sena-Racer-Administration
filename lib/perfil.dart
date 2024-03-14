@@ -243,7 +243,7 @@ class _PerfilState extends State<Perfil> {
               },
               child: const Text('Cambiar'),
             ),
-            SizedBox(width: 5),
+            const SizedBox(width: 5),
             OutlinedButton(
               style: TextButton.styleFrom(
                 foregroundColor: primaryColor,

@@ -113,6 +113,7 @@ class _AddRunnersState extends State<AddRunners> {
 
     // ignore: use_build_context_synchronously
     showDialog(
+      // ignore: use_build_context_synchronously
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -139,6 +140,7 @@ class _AddRunnersState extends State<AddRunners> {
         "https://backend-strapi-senaracer.onrender.com/api/runners/"));
 
     showDialog(
+      // ignore: use_build_context_synchronously
       context: context,
       barrierDismissible: false, // Prevent dialog from closing on tap outside
       builder: (BuildContext context) {
@@ -169,6 +171,7 @@ class _AddRunnersState extends State<AddRunners> {
             break; // Si falla la eliminación de algún corredor, sal del bucle
           }
         }
+        // ignore: use_build_context_synchronously
         Navigator.pop(context); // Close the loading dialog
         if (allDeleted) {
           _showDialogadmin("Se eliminaron los corredores",
@@ -177,14 +180,8 @@ class _AddRunnersState extends State<AddRunners> {
           _showDialogadmin(
               "Error al eliminar", "Error al eliminar los corredores");
         }
-
-        print("Se borraron todos los corredores exitosamente.");
-      } else {
-        print("La respuesta no contiene datos de corredores.");
-      }
-    } else {
-      print("Error al obtener los corredores: ${response.statusCode}");
-    }
+      } else {}
+    } else {}
   }
 
   final primaryColor = const Color.fromARGB(255, 43, 158, 20);
@@ -236,6 +233,7 @@ class _AddRunnersState extends State<AddRunners> {
     if (response.statusCode == 200) {
       // ignore: use_build_context_synchronously
       showDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
@@ -260,6 +258,7 @@ class _AddRunnersState extends State<AddRunners> {
     } else {
       // ignore: use_build_context_synchronously
       showDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
