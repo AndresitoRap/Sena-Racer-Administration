@@ -27,7 +27,8 @@ class _PerfilState extends State<Perfil> {
   final TextEditingController passwordController = TextEditingController();
 
   Future<void> _addAdmin(BuildContext context) async {
-    final url = Uri.parse('https://backend-strapi-senaracer.onrender.com/api/admins');
+    final url =
+        Uri.parse('https://backend-strapi-senaracer.onrender.com/api/admins');
 
     final response = await http.post(
       url,
@@ -61,7 +62,8 @@ class _PerfilState extends State<Perfil> {
   Future<void> changePassword(
       {required UserData userData, required String password}) async {
     @override
-    const String url = "https://backend-strapi-senaracer.onrender.com/api/admins/";
+    const String url =
+        "https://backend-strapi-senaracer.onrender.com/api/admins/";
 
     final Map<String, String> dataHeader = {
       "Acces-Control-Allow-Methods": "[GET, POST, PUT, DETELE, HEAD, OPTIONS]",
@@ -82,7 +84,7 @@ class _PerfilState extends State<Perfil> {
       // ignore: use_build_context_synchronously
       Navigator.of(context).pop();
       _showDialogadmin('Se ha modificado la contraseña',
-          'Se ah cambiado la contraseña de su usuario');
+          'Se ha cambiado la contraseña de su usuario');
     } else if (response.statusCode == 400) {
       _showDialogadmin('Error', 'Error número ${response.statusCode}');
     } else {
@@ -90,7 +92,7 @@ class _PerfilState extends State<Perfil> {
     }
   }
 
-  void ShowPasswordDialog() {
+  void showPasswordDialog() {
     final TextEditingController passwordCurrent = TextEditingController();
     final TextEditingController newpassword = TextEditingController();
     final TextEditingController newpasswordconfirmation =
@@ -99,22 +101,116 @@ class _PerfilState extends State<Perfil> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Cambio de contraseña"),
-          content: Column(
-            children: [
-              Text("Contraseña actual"),
-              TextField(
-                controller: passwordCurrent,
+          content: SizedBox(
+            width: MediaQuery.of(context).size.width * 0.5,
+            height: MediaQuery.of(context).size.width * 0.6,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        icon: const Icon(Icons.arrow_back_ios),
+                      ),
+                      const Text(
+                        "Cambiar contraseña",
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  TextField(
+                    controller: passwordCurrent,
+                    onChanged: (val) {
+                      passwordCurrent.value =
+                          passwordCurrent.value.copyWith(text: val);
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Contraseña",
+                      floatingLabelStyle: TextStyle(
+                          fontWeight: FontWeight.bold, color: primaryColor),
+                      hintText: "1234567890abc",
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: newpassword,
+                    onChanged: (val) {
+                      newpassword.value = newpassword.value.copyWith(text: val);
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Nueva contraseña",
+                      floatingLabelStyle: TextStyle(
+                          fontWeight: FontWeight.bold, color: primaryColor),
+                      hintText: "1234567890abc",
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  TextField(
+                    controller: newpasswordconfirmation,
+                    onChanged: (val) {
+                      newpasswordconfirmation.value =
+                          newpasswordconfirmation.value.copyWith(text: val);
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Confirmar contraseña",
+                      floatingLabelStyle: TextStyle(
+                          fontWeight: FontWeight.bold, color: primaryColor),
+                      hintText: "1234567890abc",
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.grey),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: primaryColor,
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Text("Coloque su contraseña nueva"),
-              TextField(
-                controller: newpassword,
-              ),
-              Text("Confirmar su contraseña"),
-              TextField(
-                controller: newpasswordconfirmation,
-              ),
-            ],
+            ),
           ),
           actions: <Widget>[
             OutlinedButton(
@@ -122,21 +218,27 @@ class _PerfilState extends State<Perfil> {
                 foregroundColor: primaryColor,
               ),
               onPressed: () {
-                if (newpassword == newpasswordconfirmation) {
-                  AlertDialog(
-                    title: Text("Error"),
-                    content: Text("Contraseñas no coinciden"),
-                    actions: [
-                      OutlinedButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text("Volver"),
-                      ),
-                    ],
-                  );
+                if (passwordCurrent.text.isEmpty ||
+                    newpassword.text.isEmpty ||
+                    newpasswordconfirmation.text.isEmpty) {
+                  _showDialogadmin("Campos Vacios",
+                      "Debes llenar todos los campos para continuar");
                 } else {
-                  Navigator.of(context).pop();
+                  if (passwordCurrent.text == UserData.password) {
+                    if (newpassword.text == newpasswordconfirmation.text) {
+                      changePassword(
+                        userData: UserData(),
+                        password: newpasswordconfirmation.text,
+                      );
+                    } else {
+                      _showDialogadmin("Error", "Contraseñan no coinciden");
+                    }
+                  } else {
+                    _showDialogadmin(
+                      "Contraseña incorrecta",
+                      "La contraseña que proporcionaste no es la que esta actualmente",
+                    );
+                  }
                 }
               },
               child: const Text('Cambiar'),
@@ -165,7 +267,8 @@ class _PerfilState extends State<Perfil> {
     required int cellphone,
   }) async {
     @override
-    const String url = "https://backend-strapi-senaracer.onrender.com/api/admins/";
+    const String url =
+        "https://backend-strapi-senaracer.onrender.com/api/admins/";
 
     final Map<String, String> dataHeader = {
       "Acces-Control-Allow-Methods": "[GET, POST, PUT, DETELE, HEAD, OPTIONS]",
@@ -819,7 +922,7 @@ class _PerfilState extends State<Perfil> {
                       ),
                     ),
                     onPressed: () {
-                      ShowPasswordDialog();
+                      showPasswordDialog();
                     },
                     child: const Text("Cambiar contraseña"),
                   ),

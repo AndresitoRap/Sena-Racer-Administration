@@ -23,6 +23,29 @@ class _AddRunnersState extends State<AddRunners> {
   List<List<dynamic>> _data =
       []; // Lista para almacenar los datos del archivo CSV
 
+  void _showDialogadmin(String title, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: primaryColor,
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // Método para cargar el archivo CSV seleccionado por el usuario
   void _loadCSV() {
     FilePicker.platform.pickFiles(
@@ -50,7 +73,8 @@ class _AddRunnersState extends State<AddRunners> {
   }
 
   Future<void> _uploadCSVtoStrapi() async {
-    const String url = "https://backend-strapi-senaracer.onrender.com/api/runners/";
+    const String url =
+        "https://backend-strapi-senaracer.onrender.com/api/runners/";
 
     showDialog(
       context: context,
@@ -109,6 +133,60 @@ class _AddRunnersState extends State<AddRunners> {
     );
   }
 
+  Future<void> deleteAllRunners() async {
+    // Realiza una solicitud GET para obtener todos los corredores
+    final response = await http.get(Uri.parse(
+        "https://backend-strapi-senaracer.onrender.com/api/runners/"));
+
+    showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dialog from closing on tap outside
+      builder: (BuildContext context) {
+        return const AlertDialog(
+          title: Text("Cargando..."),
+          content: CircularProgressIndicator(),
+        );
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Decodifica la respuesta JSON para obtener los datos de los corredores
+      final Map<String, dynamic> data = json.decode(response.body);
+
+      if (data.containsKey("data")) {
+        final List<dynamic> runners = data["data"];
+
+        // Itera sobre los corredores y envía una solicitud DELETE para cada uno
+        bool allDeleted =
+            true; // Bandera para verificar si todos los corredores se eliminaron correctamente
+        for (var runner in runners) {
+          final String runnerId = runner['id'].toString();
+          final deleteResponse = await http.delete(Uri.parse(
+              "https://backend-strapi-senaracer.onrender.com/api/runners/${runnerId.toString()}"));
+
+          if (deleteResponse.statusCode != 200) {
+            allDeleted = false;
+            break; // Si falla la eliminación de algún corredor, sal del bucle
+          }
+        }
+        Navigator.pop(context); // Close the loading dialog
+        if (allDeleted) {
+          _showDialogadmin("Se eliminaron los corredores",
+              "Se han eliminado todos los corredores");
+        } else {
+          _showDialogadmin(
+              "Error al eliminar", "Error al eliminar los corredores");
+        }
+
+        print("Se borraron todos los corredores exitosamente.");
+      } else {
+        print("La respuesta no contiene datos de corredores.");
+      }
+    } else {
+      print("Error al obtener los corredores: ${response.statusCode}");
+    }
+  }
+
   final primaryColor = const Color.fromARGB(255, 43, 158, 20);
 
   late final TextEditingController nameRunner;
@@ -135,7 +213,8 @@ class _AddRunnersState extends State<AddRunners> {
   }
 
   Future<void> addRunner() async {
-    const String url = "https://backend-strapi-senaracer.onrender.com/api/runners/";
+    const String url =
+        "https://backend-strapi-senaracer.onrender.com/api/runners/";
 
     final Map<String, String> dataBody = {
       "name": nameRunner.text,
@@ -564,6 +643,14 @@ class _AddRunnersState extends State<AddRunners> {
                         backgroundColor: const Color.fromARGB(255, 185, 40, 30),
                       ),
                       child: const Text("Estoy seguro"),
+                    ),
+                    TextButton(
+                      onPressed: deleteAllRunners,
+                      style: TextButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        backgroundColor: const Color.fromARGB(255, 185, 40, 30),
+                      ),
+                      child: const Text("Eliminar"),
                     )
                   ],
                 ),
