@@ -20,8 +20,8 @@ class _RunnersPageState extends State<RunnersPage> {
   List<Runner> runner = [];
 
   Future<List<Runner>> getAllRunners() async {
-    var response =
-        await http.get(Uri.parse("https://backend-strapi-senaracer.onrender.com/api/runners/"));
+    var response = await http.get(Uri.parse(
+        "https://backend-strapi-senaracer.onrender.com/api/runners/"));
 
     if (response.statusCode == 200) {
       runner.clear();
@@ -62,7 +62,8 @@ class _RunnersPageState extends State<RunnersPage> {
     required String password,
   }) async {
     @override
-    const String url = "https://backend-strapi-senaracer.onrender.com/api/runners/";
+    const String url =
+        "https://backend-strapi-senaracer.onrender.com/api/runners/";
 
     final Map<String, String> dataHeader = {
       "Acces-Control-Allow-Methods": "[GET, POST, PUT, DETELE, HEAD, OPTIONS]",
@@ -311,14 +312,15 @@ class _RunnersPageState extends State<RunnersPage> {
     return Padding(
       padding: const EdgeInsets.all(10),
       child: SizedBox(
-        width: MediaQuery.of(context).size.width - 300,
+        
         height: MediaQuery.of(context).size.height - 100,
         child: FutureBuilder(
           future: getAllRunners(),
           builder: (context, AsyncSnapshot<List<Runner>> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                    color: Color.fromARGB(255, 43, 158, 20)),
               );
             } else if (snapshot.hasError) {
               return Center(

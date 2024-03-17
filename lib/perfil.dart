@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sena_racer_admin/login.dart';
@@ -926,6 +925,21 @@ class _PerfilState extends State<Perfil> {
                     },
                     child: const Text("Cambiar contraseña"),
                   ),
+                  const SizedBox(width: 5),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      foregroundColor:
+                          MaterialStateProperty.resolveWith<Color?>(
+                        (Set<MaterialState> states) {
+                          return primaryColor; // primaryColor debe ser de tipo Color
+                        },
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/administración/supervisión');
+                    },
+                    child: const Text("Supervisión"),
+                  ),
                 ],
               ),
             ),
@@ -939,7 +953,7 @@ class _PerfilState extends State<Perfil> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),

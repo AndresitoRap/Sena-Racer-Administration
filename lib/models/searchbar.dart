@@ -68,7 +68,8 @@ class SearchBarDelegate extends SearchDelegate {
         builder: (context, AsyncSnapshot<List<Runner>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                    color: Color.fromARGB(255, 43, 158, 20)),
             );
           } else if (snapshot.hasError) {
             return Center(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:sena_racer_admin/home.dart';
 import 'package:sena_racer_admin/responsive_widget.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -60,21 +59,15 @@ class _LoginState extends State<Login> {
             String adminPassword = userData['attributes']['password'];
             UserData.id = userData['id'];
             UserData.identification = identification;
-            UserData.nameAdmin = userData['attributes']['name'] ?? 'null';
-            UserData.lastname = userData['attributes']['lastname'] ?? 'null';
-            UserData.email = userData['attributes']['email'] ?? 'null';
-            UserData.cellphone = userData['attributes']['cellphone'] ?? 'null';
-            UserData.password = userData['attributes']['password'] ?? 'null';
+            UserData.nameAdmin = userData['attributes']['name'] ?? ' ';
+            UserData.lastname = userData['attributes']['lastname'] ?? ' ';
+            UserData.email = userData['attributes']['email'] ?? ' ';
+            UserData.cellphone = userData['attributes']['cellphone'] ?? ' ';
+            UserData.password = userData['attributes']['password'] ?? ' ';
+            
 
             if (password == adminPassword) {
-              // ignore: use_build_context_synchronously
-              Navigator.pushReplacement(
-                // ignore: use_build_context_synchronously
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const Home(),
-                ),
-              );
+              Navigator.pushNamed(context, '/administración');
             } else {
               _showErrorDialog(
                 'Error de autenticación',
@@ -203,6 +196,7 @@ class _LoginState extends State<Login> {
                       width: width,
                       child: TextField(
                         controller: _idController,
+                        onSubmitted: (_) => _login(),
                         keyboardType: TextInputType.number,
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.digitsOnly
@@ -239,6 +233,7 @@ class _LoginState extends State<Login> {
                       width: width,
                       child: TextField(
                         controller: _passwordController,
+                        onSubmitted: (_) => _login(),
                         obscureText: obscureText,
                         decoration: InputDecoration(
                           prefixIcon: const Icon(Icons.lock),
@@ -269,16 +264,15 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                     SizedBox(height: height * 0.050),
-                    InkWell(
-                      onTap: _login,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 60, vertical: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: primaryColor,
-                        ),
-                        child: const Text(
+                    OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: primaryColor,
+                      ),
+                      onPressed: _login,
+                      child: const Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 8, horizontal: 32),
+                        child: Text(
                           "Ingresar",
                           style: TextStyle(
                             fontWeight: FontWeight.bold,

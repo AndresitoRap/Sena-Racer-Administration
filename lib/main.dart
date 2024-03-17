@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sena_racer_admin/adminhistory.dart';
 import 'package:sena_racer_admin/error_404.dart';
 import 'package:sena_racer_admin/home.dart';
 import 'package:sena_racer_admin/login.dart';
@@ -18,6 +19,7 @@ class MyApp extends StatelessWidget {
     "/": (context) =>
         const Login(), // Ruta para la pantalla de inicio de sesión
     "/administración": (context) => const Home(),
+    "/administración/supervisión": (context) => const AdminandHistory()
   };
 
   @override
