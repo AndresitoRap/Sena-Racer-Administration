@@ -26,8 +26,6 @@ class _HomeState extends State<Home> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-
-
   @override
   Widget build(BuildContext context) {
     // Método para construir el contenido principal de la pantalla
@@ -77,9 +75,7 @@ class _HomeState extends State<Home> {
           );
         case 2:
           return const SizedBox(
-            child: Expanded(
-              child: AddRunners(),
-            ),
+            child: AddRunners(),
           );
         case 3:
           return const Perfil();
