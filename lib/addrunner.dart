@@ -124,58 +124,58 @@ class _AddRunnersState extends State<AddRunners> {
         });
       }
     }
+    registrarMovimiento(UserData.identification, UserData.nameAdmin, 'Subio');
 
     // ignore: use_build_context_synchronously
     Navigator.pop(context); // Cerrar el diálogo de carga
 
     showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Column(
-              children: [
-                Text(
-                  "Se subieron $successfulCount corredores",
-                  style: const TextStyle(fontSize: 20),
-                ),
-                Text(
-                  "No se pudieron subir $failedCount corredores",
-                  style: const TextStyle(fontSize: 20),
-                ),
-              ],
-            ),
-            content: SizedBox(
-              height: 200.0,
-              width: 400,
-              child: ListView.builder(
-                itemCount: failedRunnersDetails.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title:
-                        Text("Nombre: ${failedRunnersDetails[index]['name']}"),
-                    subtitle: Text(
-                      "Identificación: ${failedRunnersDetails[index]['identification']}\n"
-                      "Razón: ${failedRunnersDetails[index]['reason']}",
-                    ),
-                  );
-                },
+      // ignore: use_build_context_synchronously
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Column(
+            children: [
+              Text(
+                "Se subieron $successfulCount corredores",
+                style: const TextStyle(fontSize: 20),
               ),
-            ),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text(
-                  'Cerrar',
-                  style: TextStyle(color: primaryColor),
-                ),
+              Text(
+                "No se pudieron subir $failedCount corredores",
+                style: const TextStyle(fontSize: 20),
               ),
             ],
-          );
-        },
-      );
+          ),
+          content: SizedBox(
+            height: 200.0,
+            width: 400,
+            child: ListView.builder(
+              itemCount: failedRunnersDetails.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ListTile(
+                  title: Text("Nombre: ${failedRunnersDetails[index]['name']}"),
+                  subtitle: Text(
+                    "Identificación: ${failedRunnersDetails[index]['identification']}\n"
+                    "Razón: ${failedRunnersDetails[index]['reason']}",
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                'Cerrar',
+                style: TextStyle(color: primaryColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> deleteAllRunners() async {
@@ -226,8 +226,32 @@ class _AddRunnersState extends State<AddRunners> {
           _showDialogadmin(
               "Error al eliminar", "Error al eliminar los corredores");
         }
+        registrarMovimiento(
+            UserData.identification, UserData.nameAdmin, 'Elimino');
       } else {}
     } else {}
+  }
+
+  Future<void> registrarMovimiento(
+      String identification, String admin, String accion) async {
+    const String url = "https://backend-strapi-senaracer.onrender.com/api/histories/";
+
+    final Map<String, dynamic> dataBody = {
+      "identification": identification,
+      "admin": admin,
+      "accion": accion,
+      "hora": DateTime.now().toString(),
+    };
+
+    final Map<String, String> dataHeader = {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
+    await http.post(
+      Uri.parse(url),
+      headers: dataHeader,
+      body: json.encode({'data': dataBody}),
+    );
   }
 
   late final TextEditingController nameRunner;

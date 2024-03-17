@@ -73,7 +73,7 @@ class MyBarGraph extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        Text("Puntaje por cada estación"),
+        const Text("Puntaje por cada estación"),
         Expanded(
           child: SizedBox(
             height: 400,
