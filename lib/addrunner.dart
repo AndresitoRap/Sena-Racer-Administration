@@ -300,6 +300,11 @@ class _AddRunnersState extends State<AddRunners> {
     );
 
     if (response.statusCode == 200) {
+      // Parsear la respuesta JSON
+      final responseData = json.decode(response.body);
+      // El ID del corredor creado
+      final runnerId = responseData['data']['id'];
+      createRelatedEntry(runnerId);
       // ignore: use_build_context_synchronously
       showDialog(
         // ignore: use_build_context_synchronously
@@ -333,6 +338,59 @@ class _AddRunnersState extends State<AddRunners> {
       // ignore: use_build_context_synchronously
       _showDialogadmin("Error", "Error al añadir el corredor");
     }
+  }
+
+  Future<void> createRelatedEntry(int runnerId) async {
+    const String urltime =
+        "https://backend-strapi-senaracer.onrender.com/api/tiempos/";
+    const String urlscore =
+        "https://backend-strapi-senaracer.onrender.com/api/scores/";
+
+    final Map<String, dynamic> dataBodytime = {
+      "data": {
+        "attributes": {
+          "time1": 0,
+          "time2": 0,
+          "time3": 0,
+          "time4": 0,
+        },
+        "runner": {
+          "connect": [
+            {"id": runnerId}
+          ]
+        }
+      }
+    };
+    final Map<String, dynamic> dataBodyscore = {
+      "data": {
+        "attributes": {
+          "score1": 0,
+          "score2": 0,
+          "score3": 0,
+          "score4": 0,
+        },
+        "runner": {
+          "connect": [
+            {"id": runnerId}
+          ]
+        }
+      }
+    };
+
+    final Map<String, String> dataHeader = {
+      'Content-Type': 'application/json; charset=UTF-8',
+    };
+
+    await http.post(
+      Uri.parse(urltime),
+      headers: dataHeader,
+      body: json.encode(dataBodytime),
+    );
+    await http.post(
+      Uri.parse(urlscore),
+      headers: dataHeader,
+      body: json.encode(dataBodyscore),
+    );
   }
 
   @override

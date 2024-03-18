@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:sena_racer_admin/models/runners.dart';
 import 'package:sena_racer_admin/models/score.dart';
 import 'package:sena_racer_admin/models/time.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +14,7 @@ class Ranking extends StatelessWidget {
     const Color primaryColor = Color.fromARGB(255, 43, 158, 20);
     List<Time> times = [];
     List<Score> scores = [];
+    List<Runner> runner = [];
 
     Future<List<Time>> getAllTimes() async {
       var response = await http.get(Uri.parse(
@@ -62,6 +64,31 @@ class Ranking extends StatelessWidget {
         );
       }
       return scores;
+    }
+
+    Future<List<Runner>> getAllRunners() async {
+      var response = await http.get(Uri.parse(
+          "https://backend-strapi-senaracer.onrender.com/api/runners/"));
+
+      if (response.statusCode == 200) {
+        runner.clear();
+      }
+
+      Map<String, dynamic> decodedData = jsonDecode(response.body);
+      Iterable runnersData = decodedData.values;
+
+      for (var item in runnersData.elementAt(0)) {
+        runner.add(
+          Runner(
+            int.parse(item['id'].toString()),
+            item['attributes']['name'],
+            item['attributes']['lastname'],
+            int.parse(item['attributes']['identification'].toString()),
+            item['attributes']['password'],
+          ),
+        );
+      }
+      return runner;
     }
 
     Map<int, double> calculateTimeAverages(List<Time> times) {
@@ -239,6 +266,53 @@ class Ranking extends StatelessWidget {
                         );
                       }
                     },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FutureBuilder<List<Runner>>(
+                      future: getAllRunners(),
+                      builder: (context, AsyncSnapshot<List<Runner>> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator(
+                                color: Color.fromARGB(255, 43, 158, 20)),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Center(
+                            child: Text(
+                              'Error: ${snapshot.error}',
+                            ),
+                          );
+                        } else if (snapshot.data == null) {
+                          return const Center(
+                            child: Text('No se encontraron corredores.'),
+                          );
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 20),
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              child: ListView.builder(
+                                  itemCount: snapshot.data!.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        color: Colors.red,
+                                        height: 200,
+                                        width: 200,
+                                        child: Text(snapshot.data![index].name),
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          );
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),
