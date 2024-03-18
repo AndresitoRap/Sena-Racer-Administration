@@ -234,7 +234,8 @@ class _AddRunnersState extends State<AddRunners> {
 
   Future<void> registrarMovimiento(
       String identification, String admin, String accion) async {
-    const String url = "https://backend-strapi-senaracer.onrender.com/api/histories/";
+    const String url =
+        "https://backend-strapi-senaracer.onrender.com/api/histories/";
 
     final Map<String, dynamic> dataBody = {
       "identification": identification,
@@ -317,7 +318,12 @@ class _AddRunnersState extends State<AddRunners> {
                   identificationRunner.clear();
                   passwordRunner.clear();
                 },
-                child: const Text("Aceptar"),
+                child: const Text(
+                  "Aceptar",
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 43, 158, 20),
+                  ),
+                ),
               ),
             ],
           );

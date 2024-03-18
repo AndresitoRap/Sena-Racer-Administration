@@ -241,7 +241,7 @@ class AdminandHistory extends StatelessWidget {
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 8),
                                         child: Container(
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                               color: Colors.black12),
                                           width: 1,
                                         ),

@@ -67,6 +67,7 @@ class _LoginState extends State<Login> {
             
 
             if (password == adminPassword) {
+              // ignore: use_build_context_synchronously
               Navigator.pushNamed(context, '/administración');
             } else {
               _showErrorDialog(

@@ -25,6 +25,7 @@ class SearchBarDelegate extends SearchDelegate {
             item['attributes']['lastname'],
             int.parse(item['attributes']['identification'].toString()),
             item['attributes']['password'],
+            
           ),
         );
       }
