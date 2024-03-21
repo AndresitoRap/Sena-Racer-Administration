@@ -108,6 +108,9 @@ class _AddRunnersState extends State<AddRunners> {
       );
 
       if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final runnerId = responseData['data']['id'];
+        await createRelatedEntry(runnerId);
         successfulCount++;
       } else {
         failedCount++;

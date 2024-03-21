@@ -32,9 +32,9 @@ class Ranking extends StatelessWidget {
           Time(
             item['id'],
             item['attributes']['time1'] ?? 0,
-            item['attributes']['time2'],
-            item['attributes']['time3'],
-            item['attributes']['time4'],
+            item['attributes']['time2'] ?? 0,
+            item['attributes']['time3'] ?? 0,
+            item['attributes']['time4'] ?? 0,
           ),
         );
       }
@@ -288,6 +288,15 @@ class Ranking extends StatelessWidget {
                           return const Center(
                             child: Text('No se encontraron corredores.'),
                           );
+                        } else if (snapshot.data!.isEmpty) {
+                          return const Center(
+                              child: Text(
+                            "No hay corredores aún",
+                            style: TextStyle(
+                              color: primaryColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ));
                         } else {
                           return Padding(
                             padding: const EdgeInsets.only(right: 20),
