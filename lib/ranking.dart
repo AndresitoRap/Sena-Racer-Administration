@@ -78,6 +78,50 @@ class Ranking extends StatelessWidget {
       Iterable runnersData = decodedData.values;
 
       for (var item in runnersData.elementAt(0)) {
+        List<Time> runnerTimes = [];
+        List<Score> runnerScores = [];
+
+        var timesResponse = await http.get(Uri.parse(
+            "https://backend-strapi-senaracer.onrender.com/api/tiempos/?runnerId=${item['id']}"));
+
+        if (timesResponse.statusCode == 200) {
+          final Map<String, dynamic> timesData = jsonDecode(timesResponse.body);
+          final Iterable timeData = timesData.values;
+
+          for (var timeItem in timeData.elementAt(0)) {
+            runnerTimes.add(
+              Time(
+                timeItem['id'],
+                timeItem['attributes']['time1'] ?? 0,
+                timeItem['attributes']['time2'] ?? 0,
+                timeItem['attributes']['time3'] ?? 0,
+                timeItem['attributes']['time4'] ?? 0,
+              ),
+            );
+          }
+        }
+
+        var scoresResponse = await http.get(Uri.parse(
+            "https://backend-strapi-senaracer.onrender.com/api/scores/?runnerId=${item['id']}"));
+
+        if (scoresResponse.statusCode == 200) {
+          final Map<String, dynamic> scoresData =
+              jsonDecode(scoresResponse.body);
+          final Iterable scoreData = scoresData.values;
+
+          for (var scoreItem in scoreData.elementAt(0)) {
+            runnerScores.add(
+              Score(
+                scoreItem['id'],
+                int.parse(scoreItem['attributes']['score1'] ?? 0),
+                int.parse(scoreItem['attributes']['score2'] ?? 0),
+                int.parse(scoreItem['attributes']['score3'] ?? 0),
+                int.parse(scoreItem['attributes']['score4'] ?? 0),
+              ),
+            );
+          }
+        }
+
         runner.add(
           Runner(
             int.parse(item['id'].toString()),
@@ -85,6 +129,8 @@ class Ranking extends StatelessWidget {
             item['attributes']['lastname'],
             int.parse(item['attributes']['identification'].toString()),
             item['attributes']['password'],
+            runnerTimes,
+            runnerScores,
           ),
         );
       }
@@ -269,58 +315,95 @@ class Ranking extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: FutureBuilder<List<Runner>>(
-                      future: getAllRunners(),
-                      builder: (context, AsyncSnapshot<List<Runner>> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(
-                                color: Color.fromARGB(255, 43, 158, 20)),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text(
-                              'Error: ${snapshot.error}',
-                            ),
-                          );
-                        } else if (snapshot.data == null) {
-                          return const Center(
-                            child: Text('No se encontraron corredores.'),
-                          );
-                        } else if (snapshot.data!.isEmpty) {
-                          return const Center(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: FutureBuilder<List<Runner>>(
+                        future: getAllRunners(),
+                        builder:
+                            (context, AsyncSnapshot<List<Runner>> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(
+                                  color: Color.fromARGB(255, 43, 158, 20)),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Center(
                               child: Text(
-                            "No hay corredores aún",
-                            style: TextStyle(
-                              color: primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ));
-                        } else {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 20),
-                            child: SizedBox(
-                              height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width,
-                              child: ListView.builder(
-                                  itemCount: snapshot.data!.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Container(
-                                        color: Colors.red,
-                                        height: 200,
-                                        width: 200,
-                                        child: Text(snapshot.data![index].name),
-                                      ),
-                                    );
-                                  }),
-                            ),
-                          );
-                        }
-                      },
+                                'Error: ${snapshot.error}',
+                              ),
+                            );
+                          } else if (snapshot.data == null) {
+                            return const Center(
+                              child: Text('No se encontraron corredores.'),
+                            );
+                          } else if (snapshot.data!.isEmpty) {
+                            return const Center(
+                                child: Text(
+                              "No hay corredores aún",
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ));
+                          } else {
+                            return SizedBox(
+                              height: MediaQuery.of(context).size.height - 100,
+                              width: MediaQuery.of(context).size.width - 100,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.vertical,
+                                child: DataTable(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  dividerThickness: 1,
+                                  columns: const [
+                                    DataColumn(
+                                        label: Text(
+                                      'Identificación',
+                                      style: TextStyle(color: primaryColor),
+                                    )),
+                                    DataColumn(
+                                        label: Text('Puesto',
+                                            style: TextStyle(
+                                                color: primaryColor))),
+                                    DataColumn(
+                                        label: Text('Nombre',
+                                            style: TextStyle(
+                                                color: primaryColor))),
+                                    DataColumn(
+                                        label: Text('Apellido',
+                                            style: TextStyle(
+                                                color: primaryColor))),
+                                    DataColumn(
+                                        label: Text('Tiempos',
+                                            style: TextStyle(
+                                                color: primaryColor))),
+                                    DataColumn(
+                                        label: Text('Puntajes',
+                                            style: TextStyle(
+                                                color: primaryColor))),
+                                  ],
+                                  rows: snapshot.data!.map((data) {
+                                    return DataRow(cells: [
+                                      DataCell(Text('0')),
+                                      DataCell(
+                                          Text(data.identification.toString())),
+                                      DataCell(Text(data.name)),
+                                      DataCell(Text(data.lastName)),
+                                      DataCell(Text(
+                                          '${data.times}')),
+                                       DataCell(Text(
+                                          '${data.scores}')),
+                                    ]);
+                                  }).toList(),
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                      ),
                     ),
                   ),
                 ],
@@ -395,28 +478,28 @@ class Ranking extends StatelessWidget {
     switch (value.toInt()) {
       case 1:
         text = const Text(
-          "Estación Gananderia",
+          "(1) Estación Cunicultura",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
         break;
       case 2:
         text = const Text(
-          "Estación Apicultura",
+          "(2) Estación Apicultura",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
         break;
       case 3:
         text = const Text(
-          "Estación Porcinos",
+          "(3) Estación Porcinos",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
         break;
       case 4:
         text = const Text(
-          "Estacion Ganaderia",
+          "(4) Estacion Ganaderia",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
@@ -438,28 +521,28 @@ class Ranking extends StatelessWidget {
     switch (value.toInt()) {
       case 1:
         text = const Text(
-          "Estación Gananderia",
+          "(1) Estación Cunicultura",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
         break;
       case 2:
         text = const Text(
-          "Estación Apicultura",
+          "(2) Estación Apicultura",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
         break;
       case 3:
         text = const Text(
-          "Estación Porcinos",
+          "(3) Estación Porcinos",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
         break;
       case 4:
         text = const Text(
-          "Estacion Ganaderia",
+          "(4) Estacion Ganaderia",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
