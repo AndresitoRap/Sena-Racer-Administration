@@ -1,6 +1,6 @@
 // Definición de la clase Runner
-import 'package:sena_racer_admin/models/score.dart';
-import 'package:sena_racer_admin/models/time.dart';
+
+import 'package:sena_racer_admin/bar_graph/individual_bar.dart';
 
 class Runner {
   int id;
@@ -8,8 +8,14 @@ class Runner {
   String lastName;
   int identification;
   String password;
-  List<Time> times;
-  List<Score> scores;
+  int score1;
+  int score2;
+  int score3;
+  int score4;
+  int time1;
+  int time2;
+  int time3;
+  int time4;
 
   Runner(
     this.id,
@@ -17,9 +23,36 @@ class Runner {
     this.lastName,
     this.identification,
     this.password,
-    this.times, 
-    this.scores
+    this.score1,
+    this.score2,
+    this.score3,
+    this.score4,
+    this.time1,
+    this.time2,
+    this.time3,
+    this.time4,
   );
 
+  List<IndividualBar> bardatascore = [];
+
+  void initialzeBarDataScore() {
+    bardatascore = [
+      IndividualBar(x: 0, y: score1),
+      IndividualBar(x: 1, y: score2),
+      IndividualBar(x: 2, y: score3),
+      IndividualBar(x: 3, y: score4),
+    ];
+  }
+
+  List<IndividualBar> bardatatime = [];
+
+  void initialzeBarDataTime() {
+    bardatatime = [
+      IndividualBar(x: 0, y: time1),
+      IndividualBar(x: 1, y: time2),
+      IndividualBar(x: 2, y: time3),
+      IndividualBar(x: 3, y: time4),
+    ];
+  }
   
 }

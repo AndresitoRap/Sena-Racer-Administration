@@ -190,9 +190,9 @@ class AdminandHistory extends StatelessWidget {
                               'Error: ${snapshot.error}',
                             ),
                           );
-                        } else if (snapshot.data == null) {
+                        } else if (snapshot.data == null || snapshot.data!.isEmpty) {
                           return const Center(
-                            child: Text('No se encontraron corredores.'),
+                            child: Text('No se encontraron movimientos'),
                           );
                         } else {
                           snapshot.data!
@@ -222,8 +222,6 @@ class AdminandHistory extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Icon(
-                                        // Utilizar un operador ternario para seleccionar el icono
-                                        // y el color apropiado según el valor de snapshot.data![index].accion
                                         snapshot.data![index].accion == "Subio"
                                             ? Icons
                                                 .arrow_upward // Icono para "Subio"

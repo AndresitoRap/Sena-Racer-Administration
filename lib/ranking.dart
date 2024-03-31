@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:sena_racer_admin/models/runners.dart';
-import 'package:sena_racer_admin/models/score.dart';
-import 'package:sena_racer_admin/models/time.dart';
 import 'package:http/http.dart' as http;
 
 class Ranking extends StatelessWidget {
@@ -12,59 +10,7 @@ class Ranking extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const Color primaryColor = Color.fromARGB(255, 43, 158, 20);
-    List<Time> times = [];
-    List<Score> scores = [];
     List<Runner> runner = [];
-
-    Future<List<Time>> getAllTimes() async {
-      var response = await http.get(Uri.parse(
-          "https://backend-strapi-senaracer.onrender.com/api/tiempos/"));
-
-      if (response.statusCode == 200) {
-        times.clear();
-      }
-
-      final Map<String, dynamic> decodedData = jsonDecode(response.body);
-      final Iterable timeData = decodedData.values;
-
-      for (var item in timeData.elementAt(0)) {
-        times.add(
-          Time(
-            item['id'],
-            item['attributes']['time1'] ?? 0,
-            item['attributes']['time2'] ?? 0,
-            item['attributes']['time3'] ?? 0,
-            item['attributes']['time4'] ?? 0,
-          ),
-        );
-      }
-      return times;
-    }
-
-    Future<List<Score>> getAllScores() async {
-      var response = await http.get(Uri.parse(
-          "https://backend-strapi-senaracer.onrender.com/api/scores/"));
-
-      if (response.statusCode == 200) {
-        scores.clear();
-      }
-
-      Map<String, dynamic> decodedData = jsonDecode(response.body);
-      Iterable scoreData = decodedData.values;
-
-      for (var item in scoreData.elementAt(0)) {
-        scores.add(
-          Score(
-            item['id'],
-            int.parse(item['attributes']['score1'] ?? 0),
-            int.parse(item['attributes']['score2'] ?? 0),
-            int.parse(item['attributes']['score3'] ?? 0),
-            int.parse(item['attributes']['score4'] ?? 0),
-          ),
-        );
-      }
-      return scores;
-    }
 
     Future<List<Runner>> getAllRunners() async {
       var response = await http.get(Uri.parse(
@@ -78,50 +24,6 @@ class Ranking extends StatelessWidget {
       Iterable runnersData = decodedData.values;
 
       for (var item in runnersData.elementAt(0)) {
-        List<Time> runnerTimes = [];
-        List<Score> runnerScores = [];
-
-        var timesResponse = await http.get(Uri.parse(
-            "https://backend-strapi-senaracer.onrender.com/api/tiempos/?runnerId=${item['id']}"));
-
-        if (timesResponse.statusCode == 200) {
-          final Map<String, dynamic> timesData = jsonDecode(timesResponse.body);
-          final Iterable timeData = timesData.values;
-
-          for (var timeItem in timeData.elementAt(0)) {
-            runnerTimes.add(
-              Time(
-                timeItem['id'],
-                timeItem['attributes']['time1'] ?? 0,
-                timeItem['attributes']['time2'] ?? 0,
-                timeItem['attributes']['time3'] ?? 0,
-                timeItem['attributes']['time4'] ?? 0,
-              ),
-            );
-          }
-        }
-
-        var scoresResponse = await http.get(Uri.parse(
-            "https://backend-strapi-senaracer.onrender.com/api/scores/?runnerId=${item['id']}"));
-
-        if (scoresResponse.statusCode == 200) {
-          final Map<String, dynamic> scoresData =
-              jsonDecode(scoresResponse.body);
-          final Iterable scoreData = scoresData.values;
-
-          for (var scoreItem in scoreData.elementAt(0)) {
-            runnerScores.add(
-              Score(
-                scoreItem['id'],
-                int.parse(scoreItem['attributes']['score1'] ?? 0),
-                int.parse(scoreItem['attributes']['score2'] ?? 0),
-                int.parse(scoreItem['attributes']['score3'] ?? 0),
-                int.parse(scoreItem['attributes']['score4'] ?? 0),
-              ),
-            );
-          }
-        }
-
         runner.add(
           Runner(
             int.parse(item['id'].toString()),
@@ -129,15 +31,21 @@ class Ranking extends StatelessWidget {
             item['attributes']['lastname'],
             int.parse(item['attributes']['identification'].toString()),
             item['attributes']['password'],
-            runnerTimes,
-            runnerScores,
+            int.parse(item['attributes']['score1'].toString()),
+            int.parse(item['attributes']['score2'].toString()),
+            int.parse(item['attributes']['score3'].toString()),
+            int.parse(item['attributes']['score4'].toString()),
+            int.parse(item['attributes']['time1'].toString()),
+            int.parse(item['attributes']['time2'].toString()),
+            int.parse(item['attributes']['time3'].toString()),
+            int.parse(item['attributes']['time4'].toString()),
           ),
         );
       }
       return runner;
     }
 
-    Map<int, double> calculateTimeAverages(List<Time> times) {
+    Map<int, double> calculateTimeAverages(List<Runner> times) {
       Map<int, double> averages = {};
       for (int i = 1; i <= 4; i++) {
         averages[i] = calculateTimeAverage(times, i);
@@ -145,7 +53,7 @@ class Ranking extends StatelessWidget {
       return averages;
     }
 
-    Map<int, double> calculateScoreAverages(List<Score> scores) {
+    Map<int, double> calculateScoreAverages(List<Runner> scores) {
       Map<int, double> averages = {};
       for (int i = 1; i <= 4; i++) {
         averages[i] = calculateScoreAverage(scores, i);
@@ -169,8 +77,8 @@ class Ranking extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 25),
                   ),
-                  FutureBuilder<List<Time>>(
-                    future: getAllTimes(),
+                  FutureBuilder<List<Runner>>(
+                    future: getAllRunners(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -179,7 +87,7 @@ class Ranking extends StatelessWidget {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else {
-                        List<Time> times = snapshot.data!;
+                        List<Runner> times = snapshot.data!;
                         Map<int, double> timeAverages =
                             calculateTimeAverages(times);
 
@@ -245,8 +153,8 @@ class Ranking extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                         fontSize: 25),
                   ),
-                  FutureBuilder<List<Score>>(
-                    future: getAllScores(),
+                  FutureBuilder<List<Runner>>(
+                    future: getAllRunners(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return const Center(
@@ -255,7 +163,7 @@ class Ranking extends StatelessWidget {
                       } else if (snapshot.hasError) {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       } else {
-                        List<Score> scores = snapshot.data!;
+                        List<Runner> scores = snapshot.data!;
                         Map<int, double> scoreAverages =
                             calculateScoreAverages(scores);
 
@@ -313,8 +221,16 @@ class Ranking extends StatelessWidget {
                       }
                     },
                   ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Detalles",
+                    style: TextStyle(
+                        color: primaryColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25),
+                  ),
                   Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: FutureBuilder<List<Runner>>(
@@ -347,6 +263,13 @@ class Ranking extends StatelessWidget {
                               ),
                             ));
                           } else {
+                            List<Runner> sortedRunners = snapshot.data!;
+                            sortedRunners.sort((a, b) => (b.score1 +
+                                    b.score2 +
+                                    b.score3 +
+                                    b.score4)
+                                .compareTo(
+                                    a.score1 + a.score2 + a.score3 + a.score4));
                             return SizedBox(
                               height: MediaQuery.of(context).size.height - 100,
                               width: MediaQuery.of(context).size.width - 100,
@@ -361,13 +284,14 @@ class Ranking extends StatelessWidget {
                                   columns: const [
                                     DataColumn(
                                         label: Text(
-                                      'Identificación',
+                                      'Puesto',
                                       style: TextStyle(color: primaryColor),
                                     )),
                                     DataColumn(
-                                        label: Text('Puesto',
-                                            style: TextStyle(
-                                                color: primaryColor))),
+                                        label: Text(
+                                      'Identificación',
+                                      style: TextStyle(color: primaryColor),
+                                    )),
                                     DataColumn(
                                         label: Text('Nombre',
                                             style: TextStyle(
@@ -377,25 +301,52 @@ class Ranking extends StatelessWidget {
                                             style: TextStyle(
                                                 color: primaryColor))),
                                     DataColumn(
-                                        label: Text('Tiempos',
+                                        label: Text('Puntajes c/e',
                                             style: TextStyle(
                                                 color: primaryColor))),
                                     DataColumn(
-                                        label: Text('Puntajes',
+                                        label: Text('Puntaje',
+                                            style: TextStyle(
+                                                color: primaryColor))),
+                                    DataColumn(
+                                        label: Text('Tiempos c/e',
+                                            style: TextStyle(
+                                                color: primaryColor))),
+                                    DataColumn(
+                                        label: Text('Tiempo',
                                             style: TextStyle(
                                                 color: primaryColor))),
                                   ],
-                                  rows: snapshot.data!.map((data) {
+                                  rows: sortedRunners.map((data) {
+                                    
+                                    int rank = sortedRunners.indexOf(data) + 1;
                                     return DataRow(cells: [
-                                      DataCell(Text('0')),
+                                      DataCell(Text(rank.toString())),
                                       DataCell(
                                           Text(data.identification.toString())),
                                       DataCell(Text(data.name)),
                                       DataCell(Text(data.lastName)),
-                                      DataCell(Text(
-                                          '${data.times}')),
-                                       DataCell(Text(
-                                          '${data.scores}')),
+                                      DataCell(MoreInfo(
+                                          data1: data.score1,
+                                          data2: data.score2,
+                                          data3: data.score3,
+                                          data4: data.score4)),
+                                      DataCell(Text((data.score1 +
+                                              data.score2 +
+                                              data.score3 +
+                                              data.score4)
+                                          .toString())),
+                                      DataCell(MoreInfo(
+                                        data1: data.time1,
+                                        data2: data.time2,
+                                        data3: data.time3,
+                                        data4: data.time4,
+                                      )),
+                                      DataCell(Text((data.time1 +
+                                              data.time2 +
+                                              data.time3 +
+                                              data.time4)
+                                          .toString())),
                                     ]);
                                   }).toList(),
                                 ),
@@ -415,7 +366,7 @@ class Ranking extends StatelessWidget {
     );
   }
 
-  double calculateTimeAverage(List<Time> times, int station) {
+  double calculateTimeAverage(List<Runner> times, int station) {
     double totalTime = 0;
     int count = 0;
     for (var time in times) {
@@ -441,7 +392,7 @@ class Ranking extends StatelessWidget {
     return totalTime / count;
   }
 
-  double calculateScoreAverage(List<Score> scores, int station) {
+  double calculateScoreAverage(List<Runner> scores, int station) {
     double totalScore = 0;
     int count = 0;
     for (var score in scores) {
@@ -465,6 +416,52 @@ class Ranking extends StatelessWidget {
     }
     if (count == 0) return 0;
     return totalScore / count;
+  }
+
+  double calculateTimeTotal(List<Runner> times, int station) {
+    double totalTime = 0;
+    for (var time in times) {
+      switch (station) {
+        case 1:
+          totalTime += time.time1;
+          break;
+        case 2:
+          totalTime += time.time2;
+          break;
+        case 3:
+          totalTime += time.time3;
+          break;
+        case 4:
+          totalTime += time.time4;
+          break;
+        default:
+          break;
+      }
+    }
+    return totalTime;
+  }
+
+  double calculateScoreTotal(List<Runner> scores, int station) {
+    double totalScore = 0;
+    for (var score in scores) {
+      switch (station) {
+        case 1:
+          totalScore += score.score1;
+          break;
+        case 2:
+          totalScore += score.score2;
+          break;
+        case 3:
+          totalScore += score.score3;
+          break;
+        case 4:
+          totalScore += score.score4;
+          break;
+        default:
+          break;
+      }
+    }
+    return totalScore;
   }
 
   Widget getBottomtitlescore(double value, TitleMeta meta) {
@@ -551,5 +548,52 @@ class Ranking extends StatelessWidget {
         text = const Text("Error");
     }
     return SideTitleWidget(axisSide: meta.axisSide, child: text);
+  }
+}
+
+class MoreInfo extends StatelessWidget {
+  const MoreInfo({
+    super.key,
+    required this.data1,
+    required this.data2,
+    required this.data3,
+    required this.data4,
+  });
+
+  final int data1;
+  final int data2;
+  final int data3;
+  final int data4;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Tooltip(
+          message: "Cunicultura", // Texto para time4
+          child: Text(
+            "$data1, ",
+          ),
+        ),
+        Tooltip(
+          message: "Apicultura", // Texto para time4
+          child: Text(
+            "$data2, ",
+          ),
+        ),
+        Tooltip(
+          message: "Porcinos", // Texto para time4
+          child: Text(
+            "$data3, ",
+          ),
+        ),
+        Tooltip(
+          message: "Ganaderia", // Texto para time4
+          child: Text(
+            "$data4",
+          ),
+        ),
+      ],
+    );
   }
 }

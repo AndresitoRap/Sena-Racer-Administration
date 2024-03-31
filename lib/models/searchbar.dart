@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sena_racer_admin/models/runners.dart';
-import 'package:sena_racer_admin/models/score.dart';
-import 'package:sena_racer_admin/models/time.dart';
 import 'package:sena_racer_admin/responsive_widget.dart';
 import 'package:http/http.dart' as http;
 
@@ -13,57 +11,13 @@ class SearchBarDelegate extends SearchDelegate {
 
   Future<List<Runner>> getAllRunners() async {
     final response =
-        await http.get(Uri.parse("http://localhost:1337/api/runners/"));
+        await http.get(Uri.parse("https://backend-strapi-senaracer.onrender.com/api/runners/"));
     if (response.statusCode == 200) {
       final decodedData = jsonDecode(response.body);
       final runnersData =
           decodedData['data']; // Assuming 'data' contains the list of runners
       List<Runner> runnerList = [];
       for (var item in runnersData) {
-
-        List<Time> runnerTimes = [];
-        List<Score> runnerScores = [];
-
-        var timesResponse = await http.get(Uri.parse(
-            "https://backend-strapi-senaracer.onrender.com/api/tiempos/?runnerId=${item['id']}"));
-
-        if (timesResponse.statusCode == 200) {
-          final Map<String, dynamic> timesData = jsonDecode(timesResponse.body);
-          final Iterable timeData = timesData.values;
-
-          for (var timeItem in timeData.elementAt(0)) {
-            runnerTimes.add(
-              Time(
-                timeItem['id'],
-                timeItem['attributes']['time1'] ?? 0,
-                timeItem['attributes']['time2'] ?? 0,
-                timeItem['attributes']['time3'] ?? 0,
-                timeItem['attributes']['time4'] ?? 0,
-              ),
-            );
-          }
-        }
-
-        var scoresResponse = await http.get(Uri.parse(
-            "https://backend-strapi-senaracer.onrender.com/api/scores/?runnerId=${item['id']}"));
-
-        if (scoresResponse.statusCode == 200) {
-          final Map<String, dynamic> scoresData =
-              jsonDecode(scoresResponse.body);
-          final Iterable scoreData = scoresData.values;
-
-          for (var scoreItem in scoreData.elementAt(0)) {
-            runnerScores.add(
-              Score(
-                scoreItem['id'],
-                int.parse(scoreItem['attributes']['score1'] ?? 0),
-                int.parse(scoreItem['attributes']['score2'] ?? 0),
-                int.parse(scoreItem['attributes']['score3'] ?? 0),
-                int.parse(scoreItem['attributes']['score4'] ?? 0),
-              ),
-            );
-          }
-        }
         
         runnerList.add(
           Runner(
@@ -72,8 +26,14 @@ class SearchBarDelegate extends SearchDelegate {
             item['attributes']['lastname'],
             int.parse(item['attributes']['identification'].toString()),
             item['attributes']['password'],
-            runnerTimes,
-            runnerScores,
+            int.parse(item['attributes']['score1'].toString()),
+            int.parse(item['attributes']['score2'].toString()),
+            int.parse(item['attributes']['score3'].toString()),
+            int.parse(item['attributes']['score4'].toString()),
+            int.parse(item['attributes']['time1'].toString()),
+            int.parse(item['attributes']['time2'].toString()),
+            int.parse(item['attributes']['time3'].toString()),
+            int.parse(item['attributes']['time4'].toString()),
           ),
         );
       }
@@ -186,7 +146,7 @@ class _RunnersWidgetState extends State<RunnersWidget> {
     void deleteRunner(int index) async {
       await http.delete(
         Uri.parse(
-            "http://localhost:1337/api/runners/${widget.filteredRunners.elementAt(index).id.toString()}"),
+            "https://backend-strapi-senaracer.onrender.com/api/runners/${widget.filteredRunners.elementAt(index).id.toString()}"),
       );
       setState(() {
         widget.filteredRunners.elementAt;
@@ -201,7 +161,7 @@ class _RunnersWidgetState extends State<RunnersWidget> {
       required String password,
     }) async {
       @override
-      const String url = "http://localhost:1337/api/runners/";
+      const String url = "https://backend-strapi-senaracer.onrender.com/api/runners/";
 
       final Map<String, String> dataHeader = {
         "Acces-Control-Allow-Methods":
