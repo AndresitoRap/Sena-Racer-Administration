@@ -30,10 +30,12 @@ class SearchBarDelegate extends SearchDelegate {
             int.parse(item['attributes']['score2'].toString()),
             int.parse(item['attributes']['score3'].toString()),
             int.parse(item['attributes']['score4'].toString()),
+            int.parse(item['attributes']['score5'].toString()),
             int.parse(item['attributes']['time1'].toString()),
             int.parse(item['attributes']['time2'].toString()),
             int.parse(item['attributes']['time3'].toString()),
             int.parse(item['attributes']['time4'].toString()),
+            int.parse(item['attributes']['time5'].toString()),
           ),
         );
       }

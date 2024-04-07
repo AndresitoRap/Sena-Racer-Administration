@@ -35,10 +35,12 @@ class Ranking extends StatelessWidget {
             int.parse(item['attributes']['score2'].toString()),
             int.parse(item['attributes']['score3'].toString()),
             int.parse(item['attributes']['score4'].toString()),
+            int.parse(item['attributes']['score5'].toString()),
             int.parse(item['attributes']['time1'].toString()),
             int.parse(item['attributes']['time2'].toString()),
             int.parse(item['attributes']['time3'].toString()),
             int.parse(item['attributes']['time4'].toString()),
+            int.parse(item['attributes']['time5'].toString()),
           ),
         );
       }
@@ -47,7 +49,7 @@ class Ranking extends StatelessWidget {
 
     Map<int, double> calculateTimeAverages(List<Runner> times) {
       Map<int, double> averages = {};
-      for (int i = 1; i <= 4; i++) {
+      for (int i = 1; i <= 5; i++) {
         averages[i] = calculateTimeAverage(times, i);
       }
       return averages;
@@ -55,7 +57,7 @@ class Ranking extends StatelessWidget {
 
     Map<int, double> calculateScoreAverages(List<Runner> scores) {
       Map<int, double> averages = {};
-      for (int i = 1; i <= 4; i++) {
+      for (int i = 1; i <= 5; i++) {
         averages[i] = calculateScoreAverage(scores, i);
       }
       return averages;
@@ -267,9 +269,9 @@ class Ranking extends StatelessWidget {
                             sortedRunners.sort((a, b) => (b.score1 +
                                     b.score2 +
                                     b.score3 +
-                                    b.score4)
+                                    b.score4 + b.score5)
                                 .compareTo(
-                                    a.score1 + a.score2 + a.score3 + a.score4));
+                                    a.score1 + a.score2 + a.score3 + a.score4 + b.score5));
                             return SizedBox(
                               height: MediaQuery.of(context).size.height - 100,
                               width: MediaQuery.of(context).size.width - 100,
@@ -330,22 +332,23 @@ class Ranking extends StatelessWidget {
                                           data1: data.score1,
                                           data2: data.score2,
                                           data3: data.score3,
-                                          data4: data.score4)),
+                                          data4: data.score4, data5: data.score5)),
                                       DataCell(Text((data.score1 +
                                               data.score2 +
                                               data.score3 +
-                                              data.score4)
+                                              data.score4 + data.score5)
                                           .toString())),
                                       DataCell(MoreInfo(
                                         data1: data.time1,
                                         data2: data.time2,
                                         data3: data.time3,
                                         data4: data.time4,
+                                        data5: data.time5,
                                       )),
                                       DataCell(Text((data.time1 +
                                               data.time2 +
                                               data.time3 +
-                                              data.time4)
+                                              data.time4 + data.time5)
                                           .toString())),
                                     ]);
                                   }).toList(),
@@ -383,6 +386,9 @@ class Ranking extends StatelessWidget {
         case 4:
           totalTime += time.time4;
           break;
+        case 5:
+          totalTime += time.time5;
+          break;
         default:
           break;
       }
@@ -409,6 +415,9 @@ class Ranking extends StatelessWidget {
         case 4:
           totalScore += score.score4;
           break;
+        case 5:
+          totalScore += score.score5;
+          break;
         default:
           break;
       }
@@ -434,6 +443,9 @@ class Ranking extends StatelessWidget {
         case 4:
           totalTime += time.time4;
           break;
+        case 5:
+          totalTime += time.time5;
+          break;
         default:
           break;
       }
@@ -456,6 +468,9 @@ class Ranking extends StatelessWidget {
           break;
         case 4:
           totalScore += score.score4;
+          break;
+        case 5:
+          totalScore += score.score5;
           break;
         default:
           break;
@@ -497,6 +512,13 @@ class Ranking extends StatelessWidget {
       case 4:
         text = const Text(
           "(4) Estacion Ganaderia",
+          style: style,
+          overflow: TextOverflow.ellipsis,
+        );
+        break;
+      case 5:
+        text = const Text(
+          "(5) Estacion SENA",
           style: style,
           overflow: TextOverflow.ellipsis,
         );
@@ -544,6 +566,13 @@ class Ranking extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         );
         break;
+        case 5:
+        text = const Text(
+          "(5) Estacion SENA",
+          style: style,
+          overflow: TextOverflow.ellipsis,
+        );
+        break;
       default:
         text = const Text("Error");
     }
@@ -558,12 +587,14 @@ class MoreInfo extends StatelessWidget {
     required this.data2,
     required this.data3,
     required this.data4,
+    required this.data5,
   });
 
   final int data1;
   final int data2;
   final int data3;
   final int data4;
+  final int data5;
 
   @override
   Widget build(BuildContext context) {
@@ -590,7 +621,13 @@ class MoreInfo extends StatelessWidget {
         Tooltip(
           message: "Ganaderia", // Texto para time4
           child: Text(
-            "$data4",
+            "$data4, ",
+          ),
+        ),
+        Tooltip(
+          message: "SENA", // Texto para time4
+          child: Text(
+            "$data5",
           ),
         ),
       ],
